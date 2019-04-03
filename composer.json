@@ -1,0 +1,25 @@
+{
+    "name": "hectordev15/anticaptchasolver",
+    "description": "a library based on anticaptcha-php by Anti-Captcha.com",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Hector15",
+            "email": "hectorld.15@gmail.com"
+        }
+    ],
+    "require": {
+        "php": ">=7.0.0",
+        "guzzlehttp/guzzle": "^6.2"
+    },
+    "autoload": {
+        "psr-4": {
+            "AntiCaptchaSolver\\": "src/AntiCaptcha",
+            "AntiCaptchaSolver\\Tests\\" : "tests"
+        }
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^6.1"
+    }
+}
