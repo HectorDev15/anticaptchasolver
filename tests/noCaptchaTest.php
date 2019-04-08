@@ -24,7 +24,7 @@ class noCaptchaTest extends TestCase
                 'websiteURL' => $url,
                 'websiteKey' => $siteKey,
             ];
-        $result = $client->solveNoCaptcha($options);
+        $result = $client->sendNoCaptcha($options);
 
 		echo $result;
 		

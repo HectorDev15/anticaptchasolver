@@ -86,7 +86,11 @@ class TaskNoCaptchaResultResponse extends Response
      */
     public function getStatus(): string
     {
-        return $this->status;
+        if ($this->status == null) {
+            return 'noFound';
+        }else{
+            return $this->status;
+        }
     }
 
     /**

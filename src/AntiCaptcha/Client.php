@@ -147,12 +147,67 @@ class Client
 
     public function solveNoCaptcha(array $options)
     {
-        $task = new NoCaptchaProxyless($options);
-        $taskResponse = $this->createTask($task);
-        $stats = $this->getQueueStats(6);
-        $delay = $stats->getSpeed() * 2;
-        sleep($delay);
-        
-        return $this->getNoCaptchaTaskResult($taskResponse->getTaskId())->getSolution()->getGRecaptchaResponse();
+        try {
+            $task = new NoCaptchaProxyless($options);
+            $taskResponse = $this->createTask($task);
+            $stats = $this->getQueueStats(6);
+            $delay = $stats->getSpeed() * 2;
+            sleep($delay);
+            do {
+                $status = $this->getNoCaptchaTaskResult($taskResponse->getTaskId())->getStatus();
+            } while ($status == 'processing');
+            
+            if ($status === 'ready') {
+                return $this->getNoCaptchaTaskResult($taskResponse->getTaskId())->getSolution()->getGRecaptchaResponse();
+            }else{
+                return false;
+            }
+        } catch (\Exception $e) {
+            return false;
+        }
+    }
+
+    public function sendNoCaptcha(array $options)
+    {
+        try {
+            $task = new NoCaptchaProxyless($options);
+            $taskResponse = $this->createTask($task);
+            if ($taskResponse->getTaskId() == 0) {
+                return false;
+            }
+            return $taskResponse->getTaskId();
+            
+        } catch (\Exception $e) {
+            return false;
+        }
+    }
+
+    public function takeNoCaptcha(string $id)
+    {
+        try {
+            $task = $this->getNoCaptchaTaskResult($id);
+            if ($task->getStatus() === 'noFound') {
+                return false;
+            }
+
+            $i = 0;
+            
+            do {
+                if ($i > 0) {
+                    sleep(25);
+                }
+                $status = $task->getStatus();
+                $i++;
+            } while ($status == 'processing' && $i <= 3);
+            
+            if ($status === 'ready') {
+                return $task->getSolution()->getGRecaptchaResponse();
+            }else{
+                return false;
+            }
+            
+        } catch (\Exception $e) {
+            return false;
+        }
     }
 }

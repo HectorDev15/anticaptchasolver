@@ -42,6 +42,36 @@ Esperar el resultado
 echo $result
 ````
 
+# Enviando Recaptcha
+```sh
+$client = new \AntiCaptchaSolver\Client('Tu API Key');
+```
+Declarar el array con los datos necesarios
+```sh
+$options = 
+[
+    'websiteURL' => 'URL del sitio con recaptcha',
+    'websiteKey' => 'Key de Recaptcha',
+];
+````
+Crear Nueva tarea
+```sh
+$result = $client->sendNoCaptcha($options);
+````
+El resultado es el ID de la solicitud al servicio
+```sh
+echo $result
+````
+
+# Obteniendo Recaptcha Result
+```sh
+$client = new \AntiCaptchaSolver\Client('Tu API Key');
+```
+enviar el ID con el id de tu solicitud
+```sh
+echo $client->takeNoCaptcha('Tu ID');
+````
+
 # Para Obtener el siteKey
 Ubica la siguiente etiqueta HTMl en el sitio 
 ```sh
