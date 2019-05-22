@@ -136,13 +136,24 @@ class Client
     
     public function solveCaptcha(string $image_string)
     {
-        $task = new ImageToTextTask($image_string);
-        $taskResponse = $this->createTask($task);
-        $stats = $this->getQueueStats(1);
-        $delay = $stats->getSpeed() * 2;
-        sleep($delay);
-        
-        return $this->getTaskResult($taskResponse->getTaskId())->getSolution()->getText();
+        try {
+            $task = new ImageToTextTask($image_string);
+            $taskResponse = $this->createTask($task);
+            $stats = $this->getQueueStats(1);
+            $delay = $stats->getSpeed() * 2;
+            sleep($delay);
+            do {
+                $status = $this->getTaskResult($taskResponse->getTaskId())->getStatus();
+            } while ($status == 'processing');
+            
+            if ($status === 'ready') {
+                return $this->getTaskResult($taskResponse->getTaskId())->getSolution()->getText();
+            }else{
+                return false;
+            }
+        } catch (\Exception $e) {
+            return false;            
+        }
     }
 
     public function solveNoCaptcha(array $options)
